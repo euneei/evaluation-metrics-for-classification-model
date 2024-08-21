@@ -2,11 +2,11 @@ import glob
 
 
 # 파일 경로 A, B, C, D 따로  
-#file_paths = glob.glob("IMU/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
+
 file_paths_A = glob.glob("IMU/A/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
-file_paths_B = glob.glob("IMU/B/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
-file_paths_C = glob.glob("IMU/C/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
-file_paths_D = glob.glob("IMU/D/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
+file_paths_B = glob.glob("IMU/B/**/inference_results.txt") # EX) CLASS B라고 생각한 파일만 넣기
+file_paths_C = glob.glob("IMU/C/**/inference_results.txt") # EX) CLASS C라고 생각한 파일만 넣기
+file_paths_D = glob.glob("IMU/D/**/inference_results.txt") # EX) CLASS D라고 생각한 파일만 넣기
 
 
 
