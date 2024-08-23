@@ -1,48 +1,47 @@
 import glob
 
-
-# 파일 경로 A, B, C, D 따로  
-
-file_paths_A = glob.glob("IMU/A/**/inference_results.txt") # EX) CLASS A라고 생각한 파일만 넣기
-file_paths_B = glob.glob("IMU/B/**/inference_results.txt") # EX) CLASS B라고 생각한 파일만 넣기
-file_paths_C = glob.glob("IMU/C/**/inference_results.txt") # EX) CLASS C라고 생각한 파일만 넣기
-file_paths_D = glob.glob("IMU/D/**/inference_results.txt") # EX) CLASS D라고 생각한 파일만 넣기
-
-
-
+# 활동 카테고리별 파일 경로 패턴
+activities = {
+    "Class A": "IMU/**/*_0/**/inference_results.txt",
+    "Class B": "IMU/**/*_1/**/inference_results.txt",
+    "Class C": "IMU/**/*_2/**/inference_results.txt",
+    "Class D": "IMU/**/*_3/**/inference_results.txt"
+}
 
 total_lines = 0
-class_a_count = 0
-class_b_count = 0
-class_c_count = 0
-class_d_count = 0
+
+correct_counts = {'Class A': 0, 'Class B': 0, 'Class C': 0, 'Class D': 0}
+total_counts = {'Class A': 0, 'Class B': 0, 'Class C': 0, 'Class D': 0}
+
+# 파일 처리
+for activity, pattern in activities.items():
+    file_paths = glob.glob(pattern)
+    for file_path in file_paths:
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                lines = file.readlines()
+                total_lines += len(lines)
+                total_counts[activity] += len(lines)
+                # 이 부분은 파일 내용에 따라 다르게 조정할 수 있습니다.
+                # 예를 들어, 파일 내 각 라인이 "0(walk)"와 같이 레이블링된다고 가정합니다.
+                correct_counts[activity] += sum(1 for line in lines if activity in line)
+
+        except FileNotFoundError:
+            print(f"The file {file_path} does not exist.")
+        except Exception as e:
+            print(f"An error occurred while reading {file_path}: {e}")
+
+# 전체 정확도 계산
+total_correct = sum(correct_counts.values())
+overall_accuracy = total_correct / total_lines if total_lines > 0 else 0
+
+# 결과 출력
+print(f"Overall accuracy: {overall_accuracy * 100:.2f}%")
+for activity in activities.keys():
+    if total_counts[activity] > 0:
+        accuracy = correct_counts[activity] / total_counts[activity]
+        print(f"Accuracy of {activity}: {accuracy* 100:.2f}%")
+    else:
+        print(f"Accuracy of {activity}: No data")
 
 
-for file_path in file_paths_A:  # file_paths_B file_paths_C file_paths_D
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                class_a_count += line.count('Class A')  
-                class_b_count += line.count('Class B') 
-                class_c_count += line.count('Class C')  
-                class_d_count += line.count('Class D')  
-                
-                total_lines += 1  
-              
-
-    except FileNotFoundError:
-        print(f"The file {file_path} does not exist.")
-    except Exception as e:
-        print(f"An error occurred while reading {file_path}: {e}")
-
-if total_lines > 0:
-
-    print(f"'Class A': {class_a_count}\n'Class B': {class_b_count}\n'Class C': {class_c_count}\n'Class D': {class_d_count}")
-
-    print(f"class A ratio: {class_a_count / total_lines *100:.2f}%")
-    print(f"class B ratio: {class_b_count / total_lines *100:.2f}%")
-    print(f"class C ratio: {class_c_count / total_lines *100:.2f}%")
-    print(f"class D ratio: {class_d_count / total_lines *100:.2f}%")
-
-else:
-    print("No lines to analyze in any files.")
